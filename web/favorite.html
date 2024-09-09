@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="icon" type="image/x-icon" href="./assets/icon.png">
+    <title id="title">1c3b3rgX | Favorite</title>
+</head>
+
+<body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
+
+    <!-- loading -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="./assets/icon.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /loading -->
+
+    <div class="scrollbar">
+        <div class="overflow my-5">
+
+            <!-- content -->
+            <section class="movie-favorite movie-player mt-5">
+                <div class="container">
+
+                    <div class="d-flex mb-4 bd-highlight">
+                        <div class="p-2 flex-grow-1 bd-highlight">
+                            <a class="back-btn shadow" href="../"><i class="fas fa-angle-left"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="movie" style="margin-top: 50px;">
+                <div class="container">
+                    <div class="anoter">
+                        <h4 class="text-white">Favorite <span class="text-warning">Video</span></h4>
+                    </div>
+                    <div class="row" id="dynamic_content"></div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="assets/js/scroll.js"></script>
+    <script src="assets/js/dark-mode.js"></script>   
+    <script>
+        const serverURL = window.location.origin;
+    
+        $(window).on('load', function () {
+            $('#preloader-active').delay(450).fadeOut('slow');
+            $('body').delay(450).css({
+                'overflow': 'visible'
+            });
+        });
+    
+        $(document).ready(function () {
+            load_data();
+    
+            function load_data() {
+                $.ajax({
+                    url: serverURL + "/db/?apikey=asd",
+                    method: "GET",
+                    success: function (data) {
+                        var dynamic_content = $('#dynamic_content');
+                        dynamic_content.empty();
+    
+                        // Ambil array ID dari sessionStorage
+                        var storedIds = JSON.parse(sessionStorage.getItem('starIds')) || [];
+    
+                        // Filter data berdasarkan ID yang ada di sessionStorage
+                        var filteredData = data.filter(item => storedIds.includes(item.id));
+    
+                        if (filteredData.length > 0) {
+                            // Tampilkan item-item yang terpilih
+                            $.each(filteredData, function (index, item) {
+                                var html = '<div class="col-lg-3 col-md-4 col-6">' +
+                                    '<a href="watch?v=' + item.id + '">' +
+                                    '<div class="poster-movie">' +
+                                    `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
+                                    '<div class="movie-title"><h6>' + item.title +
+                                    '</h6></div>' +
+                                    '</div>' +
+                                    '</a>' +
+                                    '</div>';
+                                dynamic_content.append(html);
+                            });
+                        } else {
+                            dynamic_content.append('<p class="text-error">No Movies Found</p>');
+                        }
+                    },
+                    error: function () {
+                        $('#dynamic_content').html('<p class="text-error">Failed to load data.</p>');
+                    }
+                });
+            }
+        });
+    </script>    
+</body>
+
+</html>

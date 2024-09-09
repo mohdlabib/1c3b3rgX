@@ -4,7 +4,7 @@
 @import './components/loading';
 @import './components/scroll-bar';
 @import './components/player';
-
+@import './components/movie-favorite';
 
 * {
     text-decoration: none !important;
@@ -15,7 +15,7 @@ body {
 }
 
 .masthead {
-    height: 26vh;
+    height: 20vh;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -204,4 +204,38 @@ body {
             font-size: 14px;
         }
     }
+}
+
+/* Navbar */
+.nav {
+    .favorite-link {
+        color: rgb(255, 200, 0) !important;
+        font-size: 15px;
+        transition: all 0.8s;
+        position: relative; 
+    }
+
+    .favorite-link:hover {
+        color: rgb(226, 177, 0) !important;
+    }
+
+    .favorite-link::after {
+        content: ""; 
+        display: block;
+        position: absolute; 
+        bottom: -2px; 
+        left: 50%; 
+        width: 75%; 
+        height: 2px; 
+        background-color: rgb(255, 200, 0); 
+        transform: translateX(-50%);
+    }
+} 
+
+// text error
+.text-error {
+    margin-top: 100px;
+    display: block;
+    text-align: center;
+    width: 100%;
 }

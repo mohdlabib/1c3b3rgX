@@ -146,8 +146,15 @@
     .movie-player {
         .plyr {
             background-color: #53769e;
-            border: 5px solid #53769e; /* Ubah tebal border sesuai kebutuhan */
-            border-radius: 10px; /* Ubah nilai border-radius sesuai kebutuhan */
+            border: 5px solid #53769e;
+            /* Ubah tebal border sesuai kebutuhan */
+            border-radius: 10px;
+            /* Ubah nilai border-radius sesuai kebutuhan */
+        }
+
+        .star-first {
+            color: rgb(0, 38, 255);
+            // color: rgb(255, 213, 0);
         }
 
         .back-btn {
@@ -169,4 +176,15 @@
             color: rgb(13, 0, 255) !important;
         }
     }
+
+    /* Navbar */
+    .nav {
+        .favorite-link {
+            color: rgb(255, 200, 0) !important;
+            font-size: 15px;
+            transition: all 0.8s;
+            position: relative;
+        }
+    }
+
 }

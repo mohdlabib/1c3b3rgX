@@ -7,8 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="assets/css/style.min.css">
     <link rel="icon" type="image/x-icon" href="./assets/icon.png">
     <title id="title">1c3b3rgX | </title>
@@ -39,6 +42,9 @@
                     <div class="d-flex mb-4 bd-highlight">
                         <div class="p-2 flex-grow-1 bd-highlight">
                             <a class="back-btn shadow" href="../"><i class="fas fa-angle-left"></i></a>
+                        </div>
+                        <div class="p-2">
+                            <a class="star"><i class="fa-regular fa-star"></i></a>
                         </div>
                     </div>
 
@@ -77,6 +83,26 @@
     <script src="assets/js/scroll.js"></script>
     <script src="assets/js/dark-mode.js"></script>
     <script>
+        let star = document.querySelector('.star');
+    
+        star.addEventListener('click', e => {
+            let starIds = star.getAttribute('data-id');
+            storedIds = JSON.parse(sessionStorage.getItem('starIds')) || [];
+        
+            if (storedIds.includes(starIds)) {
+                storedIds = storedIds.filter(id => id !== starIds); 
+    
+                sessionStorage.setItem('starIds', JSON.stringify(storedIds)); 
+                star.innerHTML = '<i class="fa-regular fa-star animate__animated animate__bounceIn"></i>'; 
+            } else {
+                storedIds.push(starIds);
+                sessionStorage.setItem('starIds', JSON.stringify(storedIds)); 
+    
+                star.innerHTML = '<i class="fa-solid fa-star animate__animated animate__heartBeat"></i>';
+            }
+        });
+    </script>     
+    <script>
         const serverURL = window.location.origin;
 
         function getParameterValue(parameterName) {
@@ -108,7 +134,17 @@
                 const player = new Plyr('#player');
 
                 titles.append(datas.title)
+                document.querySelector('.star').dataset.id = datas.id
                 document.querySelector('#title').innerHTML = `1c3b3rgX | ${datas.title}`
+
+                let starId = star.getAttribute('data-id');
+                let storedIds = JSON.parse(sessionStorage.getItem('starIds')) || [];
+            
+                if (storedIds.includes(starId)) {
+                    star.innerHTML = '<i class="fa-solid star-first fa-star"></i>';
+                } else {
+                    star.innerHTML = '<i class="fa-regular star-first fa-star"></i>';
+                }
             },
             error: function () {
                 console.error('Failed to fetch video data from API.');
@@ -156,11 +192,11 @@
                                 dynamic_content.append(html);
                             });
                         } else {
-                            dynamic_content.append('<p>No Movies Found</p>');
+                            dynamic_content.append('<p class="text-error">No Movies Found</p>');
                         }
                     },
                     error: function () {
-                        $('#dynamic_content').html('<p>Failed to load data.</p>');
+                        $('#dynamic_content').html('<p class="text-error">Failed to load data.</p>');
                     }
                 });
             }

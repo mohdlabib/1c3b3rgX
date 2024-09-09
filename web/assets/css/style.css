@@ -1,4 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+.darkmode--activated {
+  /* Navbar */
+}
 .darkmode--activated .movie .poster-movie {
   color: #000 !important;
   position: relative;
@@ -110,8 +113,13 @@
 }
 .darkmode--activated .movie-player .plyr {
   background-color: #53769e;
-  border: 5px solid #53769e; /* Ubah tebal border sesuai kebutuhan */
-  border-radius: 10px; /* Ubah nilai border-radius sesuai kebutuhan */
+  border: 5px solid #53769e;
+  /* Ubah tebal border sesuai kebutuhan */
+  border-radius: 10px;
+  /* Ubah nilai border-radius sesuai kebutuhan */
+}
+.darkmode--activated .movie-player .star-first {
+  color: rgb(0, 38, 255);
 }
 .darkmode--activated .movie-player .back-btn {
   background-color: #a5df31;
@@ -125,6 +133,12 @@
 }
 .darkmode--activated .anoter .text-warning {
   color: rgb(13, 0, 255) !important;
+}
+.darkmode--activated .nav .favorite-link {
+  color: rgb(255, 200, 0) !important;
+  font-size: 15px;
+  transition: all 0.8s;
+  position: relative;
 }
 
 .rotateme {
@@ -325,6 +339,12 @@
   font-size: 18px;
   border-radius: 50%;
 }
+.movie-player .star {
+  color: rgb(255, 208, 0);
+  font-size: 22px;
+  cursor: pointer;
+  text-decoration: none !important;
+}
 
 #player {
   width: 100%;
@@ -356,7 +376,7 @@ body {
 }
 
 .masthead {
-  height: 26vh;
+  height: 20vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -512,4 +532,33 @@ body {
   .pagination-custom .page-link {
     font-size: 14px;
   }
+}
+
+/* Navbar */
+.nav .favorite-link {
+  color: rgb(255, 200, 0) !important;
+  font-size: 15px;
+  transition: all 0.8s;
+  position: relative;
+}
+.nav .favorite-link:hover {
+  color: rgb(226, 177, 0) !important;
+}
+.nav .favorite-link::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 75%;
+  height: 2px;
+  background-color: rgb(255, 200, 0);
+  transform: translateX(-50%);
+}
+
+.text-error {
+  margin-top: 100px;
+  display: block;
+  text-align: center;
+  width: 100%;
 }
