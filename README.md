@@ -8,6 +8,7 @@
 - 🖼️ **Thumbnail Otomatis**: Buat thumbnail dari video.
 - 🛡️ **API Aman**: Dapatkan metadata video dengan API key.
 - 🔄 **Monitoring Real-Time**: Deteksi video baru dengan `chokidar`.
+- ⭐ **Favorite**: Menyimpan video favorit.
 
 ## 🚀 Cara Kerja
 
