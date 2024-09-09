@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="icon" type="image/x-icon" href="./assets/icon.png">
+    <title id="title">1c3b3rgX | </title>
+</head>
+
+<body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
+
+    <!-- loading -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="./assets/icon.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /loading -->
+
+    <div class="scrollbar">
+        <div class="overflow my-5">
+
+            <!-- content -->
+            <section class="movie-player mt-5">
+                <div class="container">
+
+                    <div class="d-flex mb-4 bd-highlight">
+                        <div class="p-2 flex-grow-1 bd-highlight">
+                            <a class="back-btn shadow" href="../"><i class="fas fa-angle-left"></i></a>
+                        </div>
+                    </div>
+
+                    <div id="postContent">
+
+                        <video id="player" playsinline controls data-poster="/path/to/poster.jpg">
+                            <source src="">
+                        </video>
+
+                    </div>
+
+                </div>
+            </section>
+
+
+            <section class="movie" style="margin-top: 50px;">
+                <div class="container">
+                    <div class="anoter">
+                        <h4 class="text-white">Another <span class="text-warning">Video</span></h4>
+                    </div>
+                    <div class="row" id="dynamic_content"></div>
+                </div>
+            </section>
+
+            <!-- end content -->
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="assets/js/scroll.js"></script>
+    <script src="assets/js/dark-mode.js"></script>
+    <script>
+        const serverURL = window.location.origin;
+
+        function getParameterValue(parameterName) {
+            let queryString = window.location.search;
+            let urlParams = new URLSearchParams(queryString);
+            let parameterValue = urlParams.get(parameterName);
+            return parameterValue;
+        }
+
+        $(window).on('load', function () {
+            $('#preloader-active').delay(450).fadeOut('slow');
+            $('body').delay(450).css({
+                'overflow': 'visible'
+            });
+        });
+
+        const vValue = getParameterValue('v');
+        const iframe = document.querySelector('#player')
+        const titles = document.querySelector('#title')
+
+        $.ajax({
+            url: serverURL + '/db/?apikey=asd', // Ganti dengan URL API Anda
+            method: 'GET',
+            success: function (data) {
+                let datas = data.find(item => item.id === vValue);
+                iframe.poster = datas.thumbnail.replace(/\\/g, '/')
+                iframe.querySelector('source').src = datas.name
+
+                const player = new Plyr('#player');
+
+                titles.append(datas.title)
+                document.querySelector('#title').innerHTML = `1c3b3rgX | ${datas.title}`
+            },
+            error: function () {
+                console.error('Failed to fetch video data from API.');
+            }
+        });
+
+        $(document).ready(function () {
+            load_data();
+
+            function load_data() {
+                $.ajax({
+                    url: serverURL + "/db/?apikey=asd",
+                    method: "GET",
+                    success: function (data) {
+                        var dynamic_content = $('#dynamic_content');
+                        dynamic_content.empty();
+
+                        if (data && data.length > 0) {
+                            // Hitung jumlah item dalam array
+                            var itemCount = data.length;
+
+                            // Inisialisasi array kosong untuk menampung item yang dipilih
+                            var selectedItems = [];
+
+                            // Randomisasi item-item yang dipilih
+                            while (selectedItems.length < 8 && itemCount > 0) {
+                                var randomIndex = Math.floor(Math.random() * itemCount);
+                                selectedItems.push(data[randomIndex]);
+                                data.splice(randomIndex,
+                                    1); // Hapus item yang sudah dipilih dari array
+                                itemCount--; // Kurangi jumlah item yang tersisa
+                            }
+
+                            // Tampilkan item-item yang dipilih
+                            $.each(selectedItems, function (index, item) {
+                                var html = '<div class="col-lg-3 col-md-4 col-6">' +
+                                    '<a href="watch?v=' + item.id + '">' +
+                                    '<div class="poster-movie">' +
+                                    `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
+                                    '<div class="movie-title"><h6>' + item.title +
+                                    '</h6></div>' +
+                                    '</div>' +
+                                    '</a>' +
+                                    '</div>';
+                                dynamic_content.append(html);
+                            });
+                        } else {
+                            dynamic_content.append('<p>No Movies Found</p>');
+                        }
+                    },
+                    error: function () {
+                        $('#dynamic_content').html('<p>Failed to load data.</p>');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

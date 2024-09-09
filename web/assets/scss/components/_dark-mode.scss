@@ -1,0 +1,172 @@
+.darkmode--activated {
+
+    .movie {
+        .poster-movie {
+            color: #000 !important;
+            position: relative;
+            float: left;
+            display: inline;
+            list-style-type: none;
+            margin: 18px 8px;
+
+            .imgs {
+                border: 5px solid #53769e;
+                width: 200px;
+                height: 250px;
+                border-radius: 13px;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+
+                @media only screen and (max-width: 390px) {
+                    height: 190px;
+                    width: 120px;
+                }
+
+                @media only screen and (max-width: 600px) and (min-width: 390px) {
+                    height: 260px;
+                    width: 200;
+                }
+            }
+
+        }
+
+        .poster-movie:hover .imgs {
+            transform: scale(1.05);
+        }
+
+        .movie-title h6 {
+            margin-top: 20px;
+            font-size: 15px !important;
+            color: #53769e;
+        }
+
+        // panel info
+        .panel-info {
+            .text-vid {
+                color: #000000 !important;
+            }
+
+            .text-val {
+                color: rgb(13, 0, 255) !important;
+            }
+        }
+
+    }
+
+    // pagination
+    .pagination-custom {
+        margin-top: 60px;
+        margin-bottom: 50px;
+
+        .page-link {
+            border: none !important;
+            color: rgb(238, 238, 238);
+            margin-right: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: transparent;
+            cursor: pointer;
+            border-radius: 9px;
+        }
+
+        .page-link:hover {
+            border: none !important;
+            color: rgb(255, 255, 255);
+        }
+
+        .active .page-link {
+            background-color: #53769e;
+        }
+
+        .next,
+        .prev {
+            .page-link {
+                border-radius: 9px;
+                background-color: #53769e;
+                color: #fff;
+            }
+
+            .page-link:hover {
+                background-color: #7193bb;
+            }
+        }
+
+    }
+
+    // search bar
+    .search {
+
+        margin-top: -25px;
+
+        .input-icon {
+            position: absolute;
+            font-size: 18px;
+            color: #427aba;
+            right: 34px;
+            top: 29px;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .form-search {
+
+            .form-control {
+                height: 55px;
+                border-radius: 15px;
+                padding-left: 20px;
+                border: none;
+                margin-right: 5px;
+                color: #4c719b;
+                position: relative;
+            }
+
+            ::placeholder {
+                color: #4c719b;
+                opacity: 1;
+            }
+
+            :-ms-input-placeholder {
+                color: #4c719b;
+
+            }
+
+            ::-ms-input-placeholder {
+                color: #4c719b;
+            }
+        }
+
+    }
+
+    // player
+    .movie-player {
+        .plyr {
+            background-color: #53769e;
+            border: 5px solid #53769e; /* Ubah tebal border sesuai kebutuhan */
+            border-radius: 10px; /* Ubah nilai border-radius sesuai kebutuhan */
+        }
+
+        .back-btn {
+            background-color: #a5df31;
+            padding: 7px 15px;
+            color: #000000;
+            font-size: 18px;
+            border-radius: 50%;
+        }
+    }
+
+    // panel info
+    .anoter {
+        .text-white {
+            color: #000000 !important;
+        }
+
+        .text-warning {
+            color: rgb(13, 0, 255) !important;
+        }
+    }
+}

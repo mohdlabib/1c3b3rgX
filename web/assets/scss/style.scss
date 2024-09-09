@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import './components/dark-mode';
+@import './components/loading';
+@import './components/scroll-bar';
+@import './components/player';
+
+
+* {
+    text-decoration: none !important;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+.masthead {
+    height: 26vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-top: -90px;
+}
+
+.search {
+    margin-top: -25px;
+
+    .input-icon {
+        position: absolute;
+        font-size: 18px;
+        color: #c11718;
+        right: 34px;
+        top: 29px;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .form-search {
+
+        .form-control {
+            height: 55px;
+            border-radius: 15px;
+            padding-left: 20px;
+            border: none;
+            margin-right: 5px;
+            color: #c11718;
+            position: relative;
+        }
+
+        ::placeholder {
+            color: #c11718;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+            color: #c11718;
+
+        }
+
+        ::-ms-input-placeholder {
+            color: #c11718;
+        }
+    }
+
+}
+
+.movie {
+    margin-top: 75px;
+
+    .badge-custom {
+        color: #fff !important;
+        background-color: #ff5100;
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    @media only screen and (max-width: 600px) {
+        margin-top: 80px;
+    }
+
+    // row
+    .grid {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: repeat(60, 1fr)
+    }
+
+    .col-51 {
+        grid-column-end: span 12;
+    }
+
+    @media (max-width: 600px) {
+        .grid {
+            grid-gap: 10px 0;
+        }
+
+        .grid>* {
+            grid-column-end: span 60;
+        }
+    }
+
+    // panel info
+    .panel-info {
+        .text-vid {
+            color: rgb(120, 77, 77) !important;
+        }
+
+        .text-val {
+            color: rgb(255, 200, 0) !important;
+        }
+    }
+
+    .poster-movie {
+        color: #000 !important;
+        position: relative;
+        float: left;
+        display: inline;
+        list-style-type: none;
+        margin: 18px 8px;
+
+        .imgs {
+            border: 5px solid #b66363;
+            width: 200px;
+            height: 250px;
+            border-radius: 13px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            @media only screen and (max-width: 390px) {
+                height: 190px;
+                width: 120px;
+            }
+
+            @media only screen and (max-width: 600px) and (min-width: 390px) {
+                height: 260px;
+                width: 200;
+            }
+        }
+
+    }
+
+    .poster-movie:hover .imgs {
+        transform: scale(1.05);
+    }
+
+    .movie-title h6 {
+        margin-top: 20px;
+        font-size: 15px !important;
+        color: #b34949;
+    }
+}
+
+// pagination
+.pagination-custom {
+    margin-top: 60px;
+    margin-bottom: 50px;
+
+    .page-link {
+        border: none !important;
+        color: rgb(82, 82, 82);
+        margin-right: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: transparent;
+        cursor: pointer;
+        border-radius: 9px;
+    }
+
+    .page-link:hover {
+        border: none !important;
+        color: rgb(82, 82, 82);
+    }
+
+    .active .page-link {
+        background-color: #a34343;
+    }
+
+    .active .page-link:hover {
+        color: #fff;
+    }
+
+    .next,
+    .prev {
+        .page-link {
+            border-radius: 9px;
+            background-color: #a34343;
+            color: #fff;
+        }
+
+        .page-link:hover {
+            background-color: #ae5656;
+        }
+    }
+
+    @media only screen and (max-width: 600px) {
+
+        .page-link {
+            font-size: 14px;
+        }
+    }
+}

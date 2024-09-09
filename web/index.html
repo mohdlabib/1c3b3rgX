@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="icon" type="image/x-icon" href="./assets/icon.png">
+    <title>1c3b3rgX</title>
+</head>
+
+<body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
+
+    <!-- loading -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="./assets/icon.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /loading -->
+
+    <div class="scrollbar">
+        <div class="overflow">
+
+            <nav class="navbar navbar-light">
+                <div class="container">
+                    <a class="navbar-brand" href="#">
+                    </a>
+                </div>
+            </nav>
+
+            <header class="masthead"></header>
+
+            <section class="search">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 mx-auto">
+                            <form class="form-search" action="">
+                                <input class="form-control shadow" type="text" name="search_box" id="search_box"
+                                    placeholder="Search..." onkeyup="searchMovies()">
+                                <span><i class="input-icon fas fa-search"></i></span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="movie">
+                <div class="container">
+
+                    <div class="d-flex panel-info">
+                        <div class="p-2">
+                            <p class="text-vid">Total video <span class="text-val" id="jumlahVideo">0</span></p>
+                        </div>
+                        <div class="p-2 ml-auto">
+                            <p class="text-val"><span id="videoRange"></span></p>
+                        </div>
+                    </div>
+
+                    <div id="dynamic_content" class="row"></div>
+
+                    <nav class="pagination-custom">
+                        <ul id="pagination" class="pagination justify-content-center"></ul>
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="assets/js/scroll.js"></script>
+    <script src="assets/js/dark-mode.js"></script>
+    <script>
+        $(window).on('load', function () {
+            $('#preloader-active').delay(450).fadeOut('slow');
+            $('body').delay(450).css({
+                'overflow': 'visible'
+            });
+        });
+    </script>
+    <script>
+        const serverURL = window.location.origin;
+        var currentPage = 1;
+        var videosPerPage = 20;
+        var totalVideos;
+        let datas = [];
+        let totalPages;
+
+        load_data();
+
+        $("#search_box").on("keyup", function () {
+            var query = $(this).val().toLowerCase();
+            var filteredData = datas.filter(function (item) {
+                return item.title.toLowerCase().includes(query);
+            });
+            totalVideos = filteredData.length;
+            totalPages = Math.ceil(totalVideos / videosPerPage);
+            currentPage = 1; // Set currentPage to 1 when searching
+            displayPagination(totalPages);
+            displayVideos(currentPage, filteredData);
+        });
+
+        function load_data() {
+            $.ajax({
+                url: serverURL + "/db/?apikey=asd",
+                method: "GET",
+                success: function (data) {
+                    datas = data.reverse();
+                    totalVideos = data.length;
+                    totalPages = Math.ceil(totalVideos / videosPerPage);
+                    displayPagination(totalPages);
+                    displayVideos(currentPage, data);
+                },
+                error: function () {
+                    $('#dynamic_content').html(
+                        '<p class="text-danger">Failed to load data.</p>');
+                }
+            });
+        }
+
+        function displayVideos(page, data) {
+            var start = (page - 1) * videosPerPage;
+            var end = start + videosPerPage;
+            var slicedData = data.slice(start, end);
+            var dynamic_content = $('#dynamic_content');
+            dynamic_content.empty();
+
+            $.each(slicedData, function (index, item) {
+                var html = '<div class="col-lg-3 col-md-4 col-6">' +
+                    '<a href="watch?v=' + item.id + '">' +
+                    '<div class="poster-movie">' +
+                    `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
+                    '<div class="movie-title"><h6>' + item.title + '</h6></div>' +
+                    '</div>' +
+                    '</a>' +
+                    '</div>';
+                dynamic_content.append(html);
+            });
+
+            // Menampilkan rentang video yang ditampilkan
+            var videoRangeStart = start + 1;
+            var videoRangeEnd = Math.min(end, totalVideos);
+            $('#videoRange').text(videoRangeStart + '-' + videoRangeEnd + ' of ' + totalVideos);
+        }
+
+        function displayPagination(totalPages) {
+            var pagination = $('#pagination');
+            $('#jumlahVideo').text(totalVideos);
+            pagination.empty();
+
+            var prevButton = '<li class="page-item prev"><a class="page-link" ' + (currentPage == 1 ? ' disabled' :
+                    '') + ' href="#" onclick="changePage(' + (currentPage - 1) +
+                ')">Previous</a></li>';
+
+            pagination.append(prevButton);
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(startPage + 4, totalPages);
+
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (var i = startPage; i <= endPage; i++) {
+                var pageButton = '<li class="page-item ' + (currentPage === i ? 'active' : '') +
+                    '"><a class="page-link" onclick="changePage(' + i + ')">' + i + '</a></li>';
+                pagination.append(pageButton);
+            }
+
+            var nextButton = '<li class="page-item next"><a href="#" class="page-link ' + (currentPage === totalPages ?
+                    ' disabled' : '') + '" onclick="changePage(' + (currentPage + 1) +
+                ')">Next</a></li>';
+            pagination.append(nextButton);
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            var searchQuery = $("#search_box").val().toLowerCase();
+            if (searchQuery.trim() !== "") {
+                var filteredData = datas.filter(function (item) {
+                    return item.title.toLowerCase().includes(searchQuery);
+                });
+                totalVideos = filteredData.length;
+                displayVideos(page, filteredData);
+                displayPagination(Math.ceil(totalVideos / videosPerPage));
+            } else {
+                displayVideos(page, datas);
+                displayPagination(totalPages);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
