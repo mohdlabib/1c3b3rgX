@@ -83,6 +83,8 @@
     <script src="assets/js/scroll.js"></script>
     <script src="assets/js/dark-mode.js"></script>
     <script>
+        const btnBack = document.querySelector('.movie-player .back-btn')
+        const serverURL = window.location.origin;
         let star = document.querySelector('.star');
     
         star.addEventListener('click', e => {
@@ -101,9 +103,6 @@
                 star.innerHTML = '<i class="fa-solid fa-star animate__animated animate__heartBeat"></i>';
             }
         });
-    </script>     
-    <script>
-        const serverURL = window.location.origin;
 
         function getParameterValue(parameterName) {
             let queryString = window.location.search;
@@ -184,7 +183,7 @@
                                     '<a href="watch?v=' + item.id + '">' +
                                     '<div class="poster-movie">' +
                                     `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
-                                    '<div class="movie-title"><h6>' + item.title +
+                                    '<div class="movie-title"><h6>' + formatTitle(item.title) +
                                     '</h6></div>' +
                                     '</div>' +
                                     '</a>' +
@@ -201,8 +200,12 @@
                 });
             }
         });
+  
+        btnBack.addEventListener('click', e => {
+            e.preventDefault()
+            window.location.href = sessionStorage.getItem('linkBefore')
+        })
     </script>
-
 </body>
 
 </html>

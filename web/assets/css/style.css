@@ -488,6 +488,9 @@ body {
 .movie .poster-movie:hover .imgs {
   transform: scale(1.05);
 }
+.movie .movie-title {
+  width: 100%;
+}
 .movie .movie-title h6 {
   margin-top: 20px;
   font-size: 15px !important;

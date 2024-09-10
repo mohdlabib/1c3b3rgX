@@ -98,10 +98,10 @@
             });
         });
     </script>
-    <script>
+    <script>        
         const serverURL = window.location.origin;
         var currentPage = 1;
-        var videosPerPage = 20;
+        var videosPerPage = 12;
         var totalVideos;
         let datas = [];
         let totalPages;
@@ -147,10 +147,10 @@
 
             $.each(slicedData, function (index, item) {
                 var html = '<div class="col-lg-3 col-md-4 col-6">' +
-                    '<a href="watch?v=' + item.id + '">' +
+                    '<a onclick="backLink()" href="watch?v=' + item.id + '">' +
                     '<div class="poster-movie">' +
                     `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
-                    '<div class="movie-title"><h6>' + item.title + '</h6></div>' +
+                    '<div class="movie-title"><h6>' + formatTitle(item.title) + '</h6></div>' +
                     '</div>' +
                     '</a>' +
                     '</div>';

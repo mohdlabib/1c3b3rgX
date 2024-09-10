@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -67,20 +67,20 @@
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
     <script src="assets/js/scroll.js"></script>
-    <script src="assets/js/dark-mode.js"></script>   
+    <script src="assets/js/dark-mode.js"></script>
     <script>
         const serverURL = window.location.origin;
-    
+
         $(window).on('load', function () {
             $('#preloader-active').delay(450).fadeOut('slow');
             $('body').delay(450).css({
                 'overflow': 'visible'
             });
         });
-    
+
         $(document).ready(function () {
             load_data();
-    
+
             function load_data() {
                 $.ajax({
                     url: serverURL + "/db/?apikey=asd",
@@ -88,21 +88,22 @@
                     success: function (data) {
                         var dynamic_content = $('#dynamic_content');
                         dynamic_content.empty();
-    
+
                         // Ambil array ID dari sessionStorage
                         var storedIds = JSON.parse(sessionStorage.getItem('starIds')) || [];
-    
+
                         // Filter data berdasarkan ID yang ada di sessionStorage
                         var filteredData = data.filter(item => storedIds.includes(item.id));
-    
+
                         if (filteredData.length > 0) {
                             // Tampilkan item-item yang terpilih
                             $.each(filteredData, function (index, item) {
                                 var html = '<div class="col-lg-3 col-md-4 col-6">' +
-                                    '<a href="watch?v=' + item.id + '">' +
+                                    '<a onclick="backLink()" href="watch?v=' + item.id + '">' +
                                     '<div class="poster-movie">' +
                                     `<div class="shadow imgs" style="background-image: url('${item.thumbnail.replace(/\\/g, '/')}');"></div>` +
-                                    '<div class="movie-title"><h6>' + item.title +
+                                    '<div class="movie-title"><h6>' + formatTitle(item
+                                        .title) +
                                     '</h6></div>' +
                                     '</div>' +
                                     '</a>' +
@@ -114,12 +115,13 @@
                         }
                     },
                     error: function () {
-                        $('#dynamic_content').html('<p class="text-error">Failed to load data.</p>');
+                        $('#dynamic_content').html(
+                            '<p class="text-error">Failed to load data.</p>');
                     }
                 });
             }
         });
-    </script>    
+    </script>
 </body>
 
 </html>
