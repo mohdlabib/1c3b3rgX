@@ -21,7 +21,7 @@
 
 1. Clone repo:
    ```bash
-   git clone https://github.com/yourusername/1c3b3rgX.git
+   git clone https://github.com/mohdlabib/1c3b3rgX.git
    cd 1c3b3rgX
    ```
 2. Install dependencies:
