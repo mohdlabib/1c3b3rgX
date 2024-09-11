@@ -302,7 +302,7 @@ function checkFileComplete(filePath) {
 }
 
 // schedule
-cron.schedule('0 * * * *', checkingFileAda);
+cron.schedule('*/20 * * * *', checkingFileAda);
 
 const port = process.env.PORT || 3000;
 
