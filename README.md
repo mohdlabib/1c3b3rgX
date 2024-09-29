@@ -32,6 +32,14 @@
    ```bash
    npm start
    ```
+4. Docker Run:
+   ```bash
+   docker run -d \
+   -v /{nama folder}/:/usr/src/app/public \
+   -p 3000:3000 \
+   --name iceborg \
+   nama_image
+   ```
 
 ## 🔑 API
 
