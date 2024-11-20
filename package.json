@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",    
+    "worker": "node worker.js",
+    "dev": "concurrently \"npm run start\" \"npm run worker\""
   },
   "keywords": [],
   "author": "",
@@ -18,5 +20,8 @@
     "graceful-fs": "^4.2.11",
     "node-cron": "^3.0.3",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

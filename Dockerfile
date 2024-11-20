@@ -1,21 +1,12 @@
-FROM node:14
+FROM node:16
 
 WORKDIR /usr/src/app
 
-# Menyalin package.json dan package-lock.json ke dalam container
 COPY package*.json ./
-
-# Menginstal dependensi npm
-RUN npm install
-
-# Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg
-
-# Menyalin seluruh kode sumber aplikasi ke dalam container
 COPY . .
 
-# Mengexpose port yang digunakan oleh aplikasi
+RUN npm install
+
 EXPOSE 3000
 
-# Menjalankan aplikasi saat container dimulai
-CMD ["node", "main.js"]
+CMD ["node", "server.js"]

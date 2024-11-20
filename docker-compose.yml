@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  server:
+    build: .
+    command: node server.js # Jalankan server.js
+    ports:
+      - "3000:3000"         # Ekspos port untuk server.js
+    volumes:
+      - .:/usr/src/app       # Sinkronisasi file lokal ke dalam container
+    restart: always          # Restart otomatis jika container berhenti
+
+  worker:
+    build: .
+    command: node worker.js # Jalankan worker.js
+    volumes:
+      - .:/usr/src/app       # Sinkronisasi file lokal ke dalam container
+    restart: always          # Restart otomatis jika container berhenti
