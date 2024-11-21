@@ -16,36 +16,6 @@ const thumbnailFolder = 'public/thumbnail';
 const dbFolder = 'public/db';
 const dbFile = path.join(dbFolder, 'data.json');
 
-app.use((req, res, next) => {
-    if (req.path !== '/' && !path.extname(req.path)) {
-        const filePath = path.join(__dirname, 'web', req.path + '.html');
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                next(); // Lanjutkan jika file tidak ditemukan
-            }
-        });
-    } else {
-        next();
-    }
-});
-
-app.use(express.static('web'));
-app.use(express.static('public'));
-app.use(cors());
-
-const API_KEY = 'asd';
-
-function verifyAPIKey(req, res, next) {
-    const apiKey = req.query.apikey;
-    if (apiKey && apiKey === API_KEY) {
-        next();
-    } else {
-        res.status(401).json({
-            error: 'Unauthorized'
-        });
-    }
-}
-
 function createThumbnail(videoPath) {
     const originalName = path.basename(videoPath, path.extname(videoPath)).split('_')[0];
     const uniqueId = Date.now() + Math.floor(Math.random() * 10000);
@@ -138,7 +108,6 @@ function updateDatabase(videoName, videoPath, uniqueId) {
         console.error('Error writing data to file:', err);
     }
 }
-
 
 // checking after file in
 function checkingFileAda() {
@@ -256,16 +225,6 @@ function createThumbnailExit(videoPath) {
     }
 }
 
-app.get('/db', verifyAPIKey, (req, res) => {
-
-    let data = [];
-    if (fs.existsSync(dbFile)) {
-        data = JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
-    }
-
-    res.json(data);
-});
-
 const watcher = chokidar.watch(videoFolder, {
     persistent: true,
     ignoreInitial: true,
@@ -303,11 +262,5 @@ function checkFileComplete(filePath) {
 
 // schedule
 cron.schedule('*/20 * * * *', checkingFileAda);
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
 
 checkingFileAda();
