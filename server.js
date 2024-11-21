@@ -35,6 +35,19 @@ app.get('/db', verifyAPIKey, (req, res) => {
     }
 });
 
+app.use((req, res, next) => {
+    if (req.path !== '/' && !path.extname(req.path)) {
+        const filePath = path.join(__dirname, 'web', req.path + '.html');
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                next(); 
+            }
+        });
+    } else {
+        next();
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
