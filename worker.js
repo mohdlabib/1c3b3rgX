@@ -1,61 +1,16 @@
+const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar');
-const ffmpeg = require('fluent-ffmpeg');
 const cron = require('node-cron');
+const fsExpert = require('graceful-fs');
 
 const videoFolder = 'public/videos';
 const thumbnailFolder = 'public/thumbnail';
 const dbFolder = 'public/db';
 const dbFile = path.join(dbFolder, 'data.json');
 
-function verifyAPIKey(req, res, next) {
-    const apiKey = req.query.apikey;
-    if (apiKey && apiKey === 'asd') {
-        next();
-    } else {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
-}
-
-function getDatabase() {
-    let data = [];
-    try {
-        if (fs.existsSync(dbFile)) {
-            data = JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
-        }
-    } catch (err) {
-        console.error('Error reading or parsing data file:', err);
-    }
-    return data;
-}
-
-function updateDatabase(videoName, videoPath, uniqueId) {
-    let data = getDatabase();
-
-    const thumbnailName = `${uniqueId}_thumbnail.jpg`;
-    const thumbnailPath = path.join('thumbnail', thumbnailName);
-
-    const videoBaseName = path.basename(videoPath);
-    const videoNewPath = path.join('videos', videoBaseName);
-
-    const videoInfo = {
-        id: String(uniqueId),
-        title: videoName,
-        name: videoNewPath,
-        thumbnail: thumbnailPath
-    };
-
-    data.push(videoInfo);
-
-    try {
-        fs.writeFileSync(dbFile, JSON.stringify(data, null, 2), 'utf-8');
-        console.log('Data updated successfully in the database.');
-    } catch (err) {
-        console.error('Error writing data to file:', err);
-    }
-}
-
+// Fungsi membuat thumbnail
 function createThumbnail(videoPath) {
     const originalName = path.basename(videoPath, path.extname(videoPath)).split('_')[0];
     const uniqueId = Date.now() + Math.floor(Math.random() * 10000);
@@ -73,10 +28,11 @@ function createThumbnail(videoPath) {
 
     const existingDataIndex = data.findIndex(item => item.id === originalName);
 
-    if (existingDataIndex == -1) {
+    if (existingDataIndex === -1) {
         const newUniqueVideoName = `${uniqueId}_video`;
         const newVideoPath = path.join(videoFolder, `${newUniqueVideoName}${ext}`);
 
+        // Tambahkan data ke database
         updateDatabase(originalName, newVideoPath, uniqueId);
 
         fs.rename(videoPath, newVideoPath, (err) => {
@@ -84,6 +40,8 @@ function createThumbnail(videoPath) {
                 console.error('Error renaming video file:', err);
                 return;
             }
+
+            console.log('Video file renamed successfully to:', newVideoPath);
 
             ffmpeg.ffprobe(newVideoPath, (err, metadata) => {
                 if (err) {
@@ -107,10 +65,45 @@ function createThumbnail(videoPath) {
                         console.error('Error generating thumbnail:', err);
                     });
             });
-        })
+        });
     }
 }
 
+// Fungsi memperbarui database
+function updateDatabase(videoName, videoPath, uniqueId) {
+    let data = [];
+    try {
+        if (fs.existsSync(dbFile)) {
+            data = JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
+        }
+    } catch (err) {
+        console.error('Error reading or parsing data file:', err);
+        return;
+    }
+
+    const thumbnailName = `${uniqueId}_thumbnail.jpg`;
+    const thumbnailPath = path.join('thumbnail', thumbnailName);
+    const videoBaseName = path.basename(videoPath);
+    const videoNewPath = path.join('videos', videoBaseName);
+
+    const videoInfo = {
+        id: String(uniqueId),
+        title: videoName,
+        name: videoNewPath,
+        thumbnail: thumbnailPath,
+    };
+
+    data.push(videoInfo);
+
+    try {
+        fs.writeFileSync(dbFile, JSON.stringify(data, null, 2), 'utf-8');
+        console.log('Data updated successfully in the database.');
+    } catch (err) {
+        console.error('Error writing data to file:', err);
+    }
+}
+
+// Fungsi mengecek file yang hilang atau belum selesai
 function checkingFileAda() {
     let data = [];
     try {
@@ -139,7 +132,7 @@ function checkingFileAda() {
 
         if (!thumbnailExists) {
             console.log(`Thumbnail for video ID ${video.id} (${video.title}) is missing. Creating new thumbnail.`);
-            createThumbnail(videoPath);
+            createThumbnailExit(videoPath);
             modified = true;
         }
 
@@ -171,49 +164,43 @@ function checkingFileAda() {
     }
 }
 
-function watcher() {
-    const watcher = chokidar.watch(videoFolder, {
-        persistent: true,
-        ignoreInitial: true,
-    });
+// Watcher untuk folder video
+const watcher = chokidar.watch(videoFolder, {
+    persistent: true,
+    ignoreInitial: true,
+});
 
-    watcher.on('add', (videoPath) => {
-        console.log(`New file detected: ${videoPath}. Waiting for the file to finish copying...`);
-        
-        fs.readFile(videoPath, (err, data) => {
-            if (err) {
-                setTimeout(() => {
-                    checkFileComplete(videoPath);
-                }, 1000);
-            } else {
-                console.log(`File ${videoPath} has been fully copied.`);
-                createThumbnail(videoPath);
-            }
-        });
-    });
+watcher.on('add', (videoPath) => {
+    console.log(`New file detected: ${videoPath}. Waiting for the file to finish copying...`);
 
-    return watcher;
-}
+    fs.readFile(videoPath, (err, data) => {
+        if (err) {
+            console.log('Retrying in 1 second...');
+            setTimeout(() => {
+                checkFileComplete(videoPath);
+            }, 1000);
+        } else {
+            console.log(`File ${videoPath} has been fully copied.`);
+            createThumbnail(videoPath);
+        }
+    });
+});
 
 function checkFileComplete(filePath) {
     fs.readFile(filePath, (err, data) => {
         if (err) {
             setTimeout(() => {
-                checkFileComplete(filePath); 
+                checkFileComplete(filePath);
             }, 1000);
         } else {
             console.log(`File ${filePath} is now ready.`);
-            createThumbnail(filePath); 
+            createThumbnail(filePath);
         }
     });
 }
 
+// Schedule untuk mengecek file
 cron.schedule('*/20 * * * *', checkingFileAda);
 
-function startWorkerTasks() {
-    watcher();  
-    checkingFileAda(); 
-}
-
-
-startWorkerTasks();
+// Jalankan pengecekan awal
+checkingFileAda();
