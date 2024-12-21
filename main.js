@@ -2,81 +2,87 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const session = require('express-session');
 
 const app = express();
-const videoFolder = 'public/videos';
-const dbFolder = 'public/db';
-const dbFile = path.join(dbFolder, 'data.json');
+const port = process.env.PORT || 3000;
+const dbFile = path.join(__dirname, 'public', 'db', 'data.json');
 
-// Enable CORS
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Ensure folders exist
-[videoFolder, dbFolder].forEach(folder => {
-    if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder, { recursive: true });
-    }
-});
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
 
-// Helper to read database
-function readDatabase() {
-    try {
-        return fs.existsSync(dbFile) ? JSON.parse(fs.readFileSync(dbFile, 'utf-8')) : [];
-    } catch (err) {
-        console.error('Error reading database:', err);
-        return [];
+function requireAuth(req, res, next) {
+    console.log('Session:', req.session); 
+    if (req.session && req.session.isAuthenticated) {
+        next();
+    } else {
+        res.redirect('/login');
     }
 }
 
-// API to stream video
-app.get('/videos/:name', (req, res) => {
-    const videoName = req.params.name;
-    const videoPath = path.join(videoFolder, videoName);
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'web', 'login.html'));
+});
 
-    if (!fs.existsSync(videoPath)) {
-        return res.status(404).send('Video not found');
-    }
-
-    const stat = fs.statSync(videoPath);
-    const fileSize = stat.size;
-    const range = req.headers.range;
-
-    if (range) {
-        const parts = range.replace(/bytes=/, '').split('-');
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-
-        if (start >= fileSize) {
-            res.status(416).send('Requested range not satisfiable');
-            return;
-        }
-
-        const chunkSize = (end - start) + 1;
-        const file = fs.createReadStream(videoPath, { start, end });
-        const head = {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunkSize,
-            'Content-Type': 'video/mp4',
-        };
-
-        res.writeHead(206, head);
-        file.pipe(res);
+app.post('/login', (req, res) => {
+    const { password } = req.body;
+    if (password === '12344321') { 
+        req.session.isAuthenticated = true;
+        res.redirect('/');
     } else {
-        const head = {
-            'Content-Length': fileSize,
-            'Content-Type': 'video/mp4',
-        };
-
-        res.writeHead(200, head);
-        fs.createReadStream(videoPath).pipe(res);
+        res.status(401).send('Invalid password');
     }
 });
 
-// API to fetch video list
-app.get('/videos', (req, res) => {
-    const data = readDatabase();
-    res.json(data);
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).send('Could not log out');
+        } else {
+            res.redirect('/login');
+        }
+    });
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.use(requireAuth);
+app.use(express.static('web'));
+app.use(express.static('public'));
+
+app.get('/db', (req, res) => {
+    try {
+        if (fs.existsSync(dbFile)) {
+            const data = JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
+            res.json(data);
+        } else {
+            res.status(404).json({ error: 'Database file not found' });
+        }
+    } catch (err) {
+        console.error('Error reading database file:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.use((req, res, next) => {
+    if (req.path !== '/' && !path.extname(req.path)) {
+        const filePath = path.join(__dirname, 'web', req.path + '.html');
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                next(); 
+            }
+        });
+    } else {
+        next();
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
