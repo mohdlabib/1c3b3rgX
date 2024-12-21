@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 
@@ -6,6 +7,9 @@ const app = express();
 const videoFolder = 'public/videos';
 const dbFolder = 'public/db';
 const dbFile = path.join(dbFolder, 'data.json');
+
+// Enable CORS
+app.use(cors());
 
 // Ensure folders exist
 [videoFolder, dbFolder].forEach(folder => {
