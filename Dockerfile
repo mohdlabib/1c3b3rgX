@@ -8,9 +8,6 @@ COPY package*.json ./
 # Menginstal dependensi npm
 RUN npm install
 
-# Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg
-
 # Menyalin seluruh kode sumber aplikasi ke dalam container
 COPY . .
 
